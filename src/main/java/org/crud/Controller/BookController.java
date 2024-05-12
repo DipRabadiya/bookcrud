@@ -29,12 +29,6 @@ public class BookController {
         return bookService.getAllPaged(pageRequest);
     }
 
-    @GET
-    @Path("{id}")
-    @Transactional
-    public Response getAllByStateId(@PathParam("id") Long id, @BeanParam PageRequest pageRequest) {
-        return bookService.getAllByStateId(id, pageRequest);
-    }
 
     @GET
     @Path("/find/{name}")

@@ -32,11 +32,12 @@ public class PublishingHouseService {
         return Response
                 .ok(publishingHouseRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
                 .build();
+
     }
 
     public Response delete(Long id) {
         if (publishingHouseRepository.findById(id) == null)
-            throw new WebApplicationException("State not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("PublishingHouse not found!", Response.Status.NOT_FOUND);
 
         publishingHouseRepository.deleteById(id);
         return Response.noContent().build();
@@ -54,10 +55,9 @@ public class PublishingHouseService {
         return Response.ok(updatePublishingHouse).build();
     }
 
-    public Response addPublish(PublishingHouse publishingHouse, UriInfo uriInfo) {
+    public Response addPublish(PublishingHouse publishingHouse) {
         publishingHouseRepository.persist(publishingHouse);
 
-        URI uri = uriInfo.getAbsolutePathBuilder().path("{id}").resolveTemplate("id", publishingHouse.getId()).build();
-        return Response.created(uri).build();
+        return Response.ok(publishingHouse).build();
     }
 }

@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/book-crud-operation-jvm .q2
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/book-crud-operation-jvm .
 #
 # Then run the container using:
 #

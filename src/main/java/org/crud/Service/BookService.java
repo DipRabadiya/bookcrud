@@ -38,14 +38,6 @@ public class BookService {
                 .build();
     }
 
-    public Response getAllByStateId(Long id, PageRequest pageRequest) {
-        if (bookRepository.find("book.id", id).count() == 0)
-            throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
-
-        return Response.ok(bookRepository.find("state.id", id)
-                .page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
-    }
-
     public Response getAllByCityName(String name, PageRequest pageRequest) {
         if (bookRepository.find("name", name).count() == 0)
             throw new WebApplicationException("Name not found!", Response.Status.NOT_FOUND);
@@ -74,7 +66,7 @@ public class BookService {
     public Response update(Long id, Book book) {
         Book updateBook = bookRepository.findById(id);
 
-        if (bookRepository.findById(id) == null)
+        if (updateBook == null)
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
 
         PublishingHouse publishingHouse = publishingHouseRepository.findById(book.getPublishingHouse().getId());

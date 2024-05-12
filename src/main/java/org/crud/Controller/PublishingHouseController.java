@@ -11,12 +11,11 @@ import org.crud.Model.PublishingHouse;
 import org.crud.Service.PublishingHouseService;
 import org.crud.pages.PageRequest;
 
+import java.util.List;
+
 @Path("/publishingHouses")
 @Produces(MediaType.APPLICATION_JSON)
 public class PublishingHouseController {
-
-    @Context
-    UriInfo uriInfo;
 
     @Inject
     PublishingHouseService publishingHouseService;
@@ -38,7 +37,7 @@ public class PublishingHouseController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response addPublish(PublishingHouse publishingHouse) {
-        return publishingHouseService.addPublish(publishingHouse, uriInfo);
+        return publishingHouseService.addPublish(publishingHouse);
     }
 
     @PUT

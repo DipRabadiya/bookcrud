@@ -26,8 +26,4 @@ public class PublishingHouse implements Serializable {
     private String name;
     private String description;
     private int foundingYear;
-
-    @OneToMany(mappedBy = "publishingHouse",cascade = CascadeType.ALL)
-    private List<Book> books = new ArrayList<>();
-
 }
