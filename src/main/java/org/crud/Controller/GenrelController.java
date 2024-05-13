@@ -36,8 +36,8 @@ public class GenrelController {
     @GET
     @Path("/find/{name}")
     @Transactional
-    public Response getAllByCityName(@PathParam("name") String name, @BeanParam PageRequest pageRequest) {
-        return genrelService.getAllByCityName(name, pageRequest);
+    public Response getAllByName(@PathParam("name") String name, @BeanParam PageRequest pageRequest) {
+        return genrelService.getAllByName(name, pageRequest);
     }
 
     @POST

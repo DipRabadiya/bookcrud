@@ -24,21 +24,21 @@ public class GenrelService {
 
     public long count() {
         if (genrelRepository.count() == 0)
-            throw new WebApplicationException("Cities not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("Genrels not found!", Response.Status.NOT_FOUND);
 
         return genrelRepository.count();
     }
 
     public Response getAllPaged(PageRequest pageRequest) {
         if (genrelRepository.findAll().count() == 0)
-            throw new WebApplicationException("Cities not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("Genrels not found!", Response.Status.NOT_FOUND);
 
         return Response
                 .ok(genrelRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
                 .build();
     }
 
-    public Response getAllByCityName(String name, PageRequest pageRequest) {
+    public Response getAllByName(String name, PageRequest pageRequest) {
         if (genrelRepository.find("name", name).count() == 0)
             throw new WebApplicationException("Name not found!", Response.Status.NOT_FOUND);
 
