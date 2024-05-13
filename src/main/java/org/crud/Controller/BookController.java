@@ -34,7 +34,7 @@ public class BookController {
     @Path("/find/{name}")
     @Transactional
     public Response getAllByCityName(@PathParam("name") String name, @BeanParam PageRequest pageRequest) {
-        return bookService.getAllByCityName(name, pageRequest);
+        return bookService.getAllByName(name, pageRequest);
     }
 
     @POST

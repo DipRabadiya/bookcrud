@@ -24,28 +24,27 @@ public class BookService {
 
     public long count() {
         if (bookRepository.count() == 0)
-            throw new WebApplicationException("Cities not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
 
         return bookRepository.count();
     }
 
     public Response getAllPaged(PageRequest pageRequest) {
         if (bookRepository.findAll().count() == 0)
-            throw new WebApplicationException("Cities not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
 
         return Response
                 .ok(bookRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
                 .build();
     }
 
-    public Response getAllByCityName(String name, PageRequest pageRequest) {
+    public Response getAllByName(String name, PageRequest pageRequest) {
         if (bookRepository.find("name", name).count() == 0)
             throw new WebApplicationException("Name not found!", Response.Status.NOT_FOUND);
 
-        PanacheQuery<Book> city = bookRepository.find("name", name);
-        // city.stream().forEach(x -> x.setName(x.getName().substring(3)));
+        PanacheQuery<Book> book = bookRepository.find("name", name);
 
-        return Response.ok(city.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
+        return Response.ok(book.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
     }
 
     public Response addBook(Book book) {
