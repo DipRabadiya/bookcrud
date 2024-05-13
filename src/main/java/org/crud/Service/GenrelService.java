@@ -83,7 +83,7 @@ public class GenrelService {
 
     public Response delete(Long id) {
         if (genrelRepository.findById(id) == null)
-            throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("Genrel not found!", Response.Status.NOT_FOUND);
 
         genrelRepository.deleteById(id);
         return Response.noContent().build();
