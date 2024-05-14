@@ -6,19 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Transactional
 @Table(name="publishing_houses")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublishingHouse implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PublishingHouse{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,6 +14,9 @@ import org.crud.Repository.GenrelRepository;
 import org.crud.Repository.PublishingHouseRepository;
 import org.crud.pages.PageRequest;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @ApplicationScoped
 public class GenrelService {
     @Inject
@@ -21,71 +24,87 @@ public class GenrelService {
 
     @Inject
     BookRepository bookRepository;
+    private static final Logger LOGGER = Logger.getLogger(GenrelService.class.getName());
+
 
     public long count() {
-        if (genrelRepository.count() == 0)
+        LOGGER.log(Level.INFO, "Attempting to count Genrels...");
+        Long count = genrelRepository.count();
+        if (count == 0) {
+            LOGGER.log(Level.WARNING, "No Genrels found.");
             throw new WebApplicationException("Genrels not found!", Response.Status.NOT_FOUND);
-
-        return genrelRepository.count();
+        }
+        LOGGER.log(Level.INFO, "Number of genrels found: " + count);
+        return count;
     }
 
     public Response getAllPaged(PageRequest pageRequest) {
-        if (genrelRepository.findAll().count() == 0)
+        LOGGER.log(Level.INFO, "Attempting to retrieve paged list of genrels...");
+        Long genrel = genrelRepository.findAll().count();
+        if (genrel == 0) {
+            LOGGER.log(Level.WARNING, "No genrels found for the given page request.");
             throw new WebApplicationException("Genrels not found!", Response.Status.NOT_FOUND);
-
+        }
+        LOGGER.log(Level.INFO, "Genrels retrieved successfully.");
         return Response
                 .ok(genrelRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
                 .build();
     }
 
     public Response getAllByName(String name, PageRequest pageRequest) {
-        if (genrelRepository.find("name", name).count() == 0)
-            throw new WebApplicationException("Name not found!", Response.Status.NOT_FOUND);
-
-        PanacheQuery<Genrel> genrel = genrelRepository.find("name", name);
-
-        return Response.ok(genrel.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
+        LOGGER.log(Level.INFO, "Attempting to retrieve Genrels by name: " + name);
+        PanacheQuery<Genrel> genrelQuery = genrelRepository.find("name", name);
+        if (genrelQuery.count() == 0) {
+            LOGGER.log(Level.WARNING, "No Genrels found with name: " + name);
+            throw new WebApplicationException("Genrels not found with name: " + name, Response.Status.NOT_FOUND);
+        }
+        LOGGER.log(Level.INFO, "Genrels retrieved successfully.");
+        return Response.ok(genrelQuery.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
     }
 
     public Response addGenrel(Genrel genrel) {
-        if (bookRepository.findById(genrel.getBook().getId()) == null)
-            throw new WebApplicationException("Genrel not found!", Response.Status.NOT_FOUND);
-
-       Book book = bookRepository.findById(genrel.getBook().getId());
-
-        genrel.getBook().setName(book.getName());
-        genrel.getBook().setDescription(book.getDescription());
-        genrel.getBook().setYearOfPublication(book.getYearOfPublication());
-
+        LOGGER.log(Level.INFO, "Attempting to add Genrel...");
+        Book book = bookRepository.findById(genrel.getBook().getId());
+        if (book == null) {
+            LOGGER.log(Level.WARNING, "Book with ID " + genrel.getBook().getId() + " not found.");
+            throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
+        }
+        genrel.setBook(book);
         genrelRepository.persist(genrel);
+        LOGGER.log(Level.INFO, "Genrel added successfully.");
         return Response.ok(genrel).status(Response.Status.CREATED).build();
     }
 
 
     public Response update(Long id, Genrel genrel) {
+        LOGGER.log(Level.INFO, "Attempting to update Genrel with ID: " + id);
         Genrel updateGenrel = genrelRepository.findById(id);
-
-        if (updateGenrel == null)
+        if (updateGenrel == null) {
+            LOGGER.log(Level.WARNING, "Genrel with ID " + id + " not found.");
             throw new WebApplicationException("Genrel not found!", Response.Status.NOT_FOUND);
-
+        }
         Book book = bookRepository.findById(genrel.getBook().getId());
-        if(book == null)
-            throw new WebApplicationException("Book not found with id: "+genrel.getBook().getId(), Response.Status.NOT_FOUND);
-
+        if (book == null) {
+            LOGGER.log(Level.WARNING, "Book with ID " + genrel.getBook().getId() + " not found.");
+            throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
+        }
         updateGenrel.setName(genrel.getName());
         updateGenrel.setDescription(genrel.getDescription());
-        updateGenrel.setDescription(genrel.getDescription());
         updateGenrel.setBook(book);
-
-        return Response.ok(book).build();
+        LOGGER.log(Level.INFO, "Genrel updated successfully.");
+        return Response.ok(updateGenrel).build();
     }
 
 
     public Response delete(Long id) {
-        if (genrelRepository.findById(id) == null)
+        LOGGER.log(Level.INFO, "Attempting to delete Genrel with ID: " + id);
+        Genrel deleteGenrel = genrelRepository.findById(id);
+        if (deleteGenrel == null) {
+            LOGGER.log(Level.WARNING, "Genrel with ID " + id + " not found.");
             throw new WebApplicationException("Genrel not found!", Response.Status.NOT_FOUND);
-
+        }
         genrelRepository.deleteById(id);
+        LOGGER.log(Level.INFO, "Genrel deleted successfully.");
         return Response.noContent().build();
     }
 }

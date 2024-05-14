@@ -13,6 +13,8 @@ import org.crud.Repository.PublishingHouseRepository;
 import org.crud.pages.PageRequest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ApplicationScoped
 public class BookService {
@@ -22,70 +24,87 @@ public class BookService {
     @Inject
     BookRepository bookRepository;
 
-    public long count() {
-        if (bookRepository.count() == 0)
-            throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
+    private static final Logger LOGGER = Logger.getLogger(BookService.class.getName());
 
-        return bookRepository.count();
+
+    public long count() {
+        LOGGER.log(Level.INFO, "Attempting to count books...");
+        Long count = bookRepository.count();
+        if (count == 0) {
+            LOGGER.log(Level.WARNING, "No books found.");
+            throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
+        }
+        LOGGER.log(Level.INFO, "Number of books found: " + count);
+        return count;
     }
 
     public Response getAllPaged(PageRequest pageRequest) {
-        if (bookRepository.findAll().count() == 0)
+        LOGGER.log(Level.INFO, "Attempting to retrieve paged list of books...");
+        Long bookCount = bookRepository.findAll().count();
+        if (bookCount == 0) {
+            LOGGER.log(Level.WARNING, "No books found for the given page request.");
             throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
-
+        }
+        LOGGER.log(Level.INFO, "Books retrieved successfully.");
         return Response
                 .ok(bookRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
                 .build();
     }
 
     public Response getAllByName(String name, PageRequest pageRequest) {
-        if (bookRepository.find("name", name).count() == 0)
-            throw new WebApplicationException("Name not found!", Response.Status.NOT_FOUND);
-
-        PanacheQuery<Book> book = bookRepository.find("name", name);
-
-        return Response.ok(book.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
+        PanacheQuery<Book> bookPanacheQuery=bookRepository.find("name" + name);
+        if (bookPanacheQuery.count() == 0) {
+            LOGGER.log(Level.WARNING, "No books found with name: " + name);
+            throw new WebApplicationException("Books not found with name: " + name, Response.Status.NOT_FOUND);
+        }
+        LOGGER.log(Level.INFO, "Books retrieved successfully.");
+        return Response.ok(bookPanacheQuery.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
     }
 
     public Response addBook(Book book) {
-        if (publishingHouseRepository.findById(book.getPublishingHouse().getId()) == null)
-            throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
-
+        LOGGER.log(Level.INFO, "Attempting to add book: " + book.getName());
         PublishingHouse publishingHouse = publishingHouseRepository.findById(book.getPublishingHouse().getId());
-
-        book.getPublishingHouse().setName(publishingHouse.getName());
-        book.getPublishingHouse().setDescription(publishingHouse.getDescription());
-        book.getPublishingHouse().setFoundingYear(publishingHouse.getFoundingYear());
-
+        if (publishingHouse == null) {
+            LOGGER.log(Level.WARNING, "Publishing house with ID " + book.getPublishingHouse().getId() + " not found.");
+            throw new WebApplicationException("Publishing house not found!", Response.Status.NOT_FOUND);
+        }
+        book.setPublishingHouse(publishingHouse);
         bookRepository.persist(book);
+        LOGGER.log(Level.INFO, "Book added successfully.");
         return Response.ok(book).status(Response.Status.CREATED).build();
     }
 
 
     public Response update(Long id, Book book) {
+        LOGGER.log(Level.INFO, "Attempting to update book with ID: " + id);
         Book updateBook = bookRepository.findById(id);
-
-        if (updateBook == null)
+        if (updateBook == null) {
+            LOGGER.log(Level.WARNING, "Book with ID " + id + " not found.");
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
-
+        }
         PublishingHouse publishingHouse = publishingHouseRepository.findById(book.getPublishingHouse().getId());
-        if(publishingHouse == null)
-            throw new WebApplicationException("Publisher  not found with id: "+book.getPublishingHouse().getId(), Response.Status.NOT_FOUND);
-
+        if(publishingHouse == null) {
+            LOGGER.log(Level.WARNING, "Publishing house with ID " + book.getPublishingHouse().getId() + " not found.");
+            throw new WebApplicationException("Publisher not found with ID: " + book.getPublishingHouse().getId(), Response.Status.NOT_FOUND);
+        }
         updateBook.setName(book.getName());
         updateBook.setDescription(book.getDescription());
         updateBook.setYearOfPublication(book.getYearOfPublication());
         updateBook.setPublishingHouse(publishingHouse);
-
-        return Response.ok(publishingHouse).build();
+        LOGGER.log(Level.INFO, "Book updated successfully.");
+        return Response.ok(updateBook).build();
     }
 
 
     public Response delete(Long id) {
-        if (bookRepository.findById(id) == null)
+        LOGGER.log(Level.INFO, "Attempting to delete book with ID: " + id);
+        Book deleteBook = bookRepository.findById(id);
+        if (deleteBook == null) {
+            LOGGER.log(Level.WARNING, "Book with ID " + id + " not found.");
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
-
+        }
         bookRepository.deleteById(id);
+        LOGGER.log(Level.INFO, "Book deleted successfully.");
         return Response.noContent().build();
     }
 }
