@@ -16,6 +16,7 @@ public class Genrel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
+    @Column(unique = true)
     public String name;
     public String description;
 

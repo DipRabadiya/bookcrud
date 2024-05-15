@@ -7,8 +7,10 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.crud.Model.Book;
+import org.crud.Model.Genrel;
 import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
+import org.crud.Repository.GenrelRepository;
 import org.crud.Repository.PublishingHouseRepository;
 import org.crud.pages.PageRequest;
 
@@ -23,6 +25,8 @@ public class BookService {
 
     @Inject
     BookRepository bookRepository;
+    @Inject
+    GenrelRepository genrelRepository;
 
     private static final Logger LOGGER = Logger.getLogger(BookService.class.getName());
 
@@ -52,7 +56,7 @@ public class BookService {
     }
 
     public Response getAllByName(String name, PageRequest pageRequest) {
-        PanacheQuery<Book> bookPanacheQuery=bookRepository.find("name" + name);
+        PanacheQuery<Book> bookPanacheQuery = bookRepository.find("name" + name);
         if (bookPanacheQuery.count() == 0) {
             LOGGER.log(Level.WARNING, "No books found with name: " + name);
             throw new WebApplicationException("Books not found with name: " + name, Response.Status.NOT_FOUND);
@@ -83,7 +87,7 @@ public class BookService {
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
         }
         PublishingHouse publishingHouse = publishingHouseRepository.findById(book.getPublishingHouse().getId());
-        if(publishingHouse == null) {
+        if (publishingHouse == null) {
             LOGGER.log(Level.WARNING, "Publishing house with ID " + book.getPublishingHouse().getId() + " not found.");
             throw new WebApplicationException("Publisher not found with ID: " + book.getPublishingHouse().getId(), Response.Status.NOT_FOUND);
         }
@@ -95,13 +99,18 @@ public class BookService {
         return Response.ok(updateBook).build();
     }
 
-
     public Response delete(Long id) {
         LOGGER.log(Level.INFO, "Attempting to delete book with ID: " + id);
         Book deleteBook = bookRepository.findById(id);
         if (deleteBook == null) {
             LOGGER.log(Level.WARNING, "Book with ID " + id + " not found.");
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
+        }
+        // Check if there are any associated genres with this book
+        List<Genrel> genres = genrelRepository.find("book.id", id).list();
+        if (!genres.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Cannot delete book with ID " + id + " because it still has associated genres.");
+            throw new WebApplicationException("Cannot delete book because it still has associated genres!", Response.Status.BAD_REQUEST);
         }
         bookRepository.deleteById(id);
         LOGGER.log(Level.INFO, "Book deleted successfully.");
