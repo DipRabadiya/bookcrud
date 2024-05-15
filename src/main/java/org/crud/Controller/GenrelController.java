@@ -6,10 +6,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.crud.Model.Book;
 import org.crud.Model.Genrel;
-import org.crud.Service.BookService;
-import org.crud.Service.GenrelService;
+import org.crud.GenrelService;
 import org.crud.pages.PageRequest;
 
 @Path("/genres")
@@ -28,8 +26,8 @@ public class GenrelController {
 
     @GET
     @Transactional
-    public Response getAllPaged(@BeanParam PageRequest pageRequest) {
-        return genrelService.getAllPaged(pageRequest);
+    public Response getAllGenrels() {
+        return genrelService.getAllGenrels();
     }
 
 

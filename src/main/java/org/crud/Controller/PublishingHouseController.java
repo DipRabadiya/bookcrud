@@ -3,15 +3,11 @@ package org.crud.Controller;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
 import org.crud.Model.PublishingHouse;
-import org.crud.Service.PublishingHouseService;
+import org.crud.PublishingHouseService;
 import org.crud.pages.PageRequest;
-
-import java.util.List;
 
 @Path("/publishingHouses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +25,8 @@ public class PublishingHouseController {
 
     @GET
     @Transactional
-    public Response getAllPaged(@BeanParam PageRequest pageRequest) {
-        return publishingHouseService.getAllPaged(pageRequest);
+    public Response getAllPublishingHouses() {
+        return publishingHouseService.getAllPublishingHouses();
     }
 
     @POST

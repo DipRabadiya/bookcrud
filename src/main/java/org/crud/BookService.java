@@ -1,4 +1,4 @@
-package org.crud.Service;
+package org.crud;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -42,17 +42,15 @@ public class BookService {
         return count;
     }
 
-    public Response getAllPaged(PageRequest pageRequest) {
-        LOGGER.log(Level.INFO, "Attempting to retrieve paged list of books...");
-        Long bookCount = bookRepository.findAll().count();
-        if (bookCount == 0) {
-            LOGGER.log(Level.WARNING, "No books found for the given page request.");
+    public Response getAllBooks() {
+        LOGGER.log(Level.INFO, "Attempting to retrieve all Books...");
+        List<Book> books = bookRepository.listAll();
+        if (books.isEmpty()) {
+            LOGGER.log(Level.WARNING, "No Books found.");
             throw new WebApplicationException("Books not found!", Response.Status.NOT_FOUND);
         }
         LOGGER.log(Level.INFO, "Books retrieved successfully.");
-        return Response
-                .ok(bookRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
-                .build();
+        return Response.ok(books).build();
     }
 
     public Response getAllByName(String name, PageRequest pageRequest) {
@@ -86,6 +84,11 @@ public class BookService {
             LOGGER.log(Level.WARNING, "Book with ID " + id + " not found.");
             throw new WebApplicationException("Book not found!", Response.Status.NOT_FOUND);
         }
+        if (book.getPublishingHouse() == null || book.getPublishingHouse().getId() == null) {
+            LOGGER.log(Level.WARNING, "Publishing house ID is null.");
+            throw new WebApplicationException("Publishing house ID is null!", Response.Status.BAD_REQUEST);
+        }
+
         PublishingHouse publishingHouse = publishingHouseRepository.findById(book.getPublishingHouse().getId());
         if (publishingHouse == null) {
             LOGGER.log(Level.WARNING, "Publishing house with ID " + book.getPublishingHouse().getId() + " not found.");

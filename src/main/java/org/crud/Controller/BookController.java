@@ -6,7 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.crud.Model.Book;
-import org.crud.Service.BookService;
+import org.crud.BookService;
 import org.crud.pages.PageRequest;
 
 @Path("/books")
@@ -25,8 +25,8 @@ public class BookController {
 
     @GET
     @Transactional
-    public Response getAllPaged(@BeanParam PageRequest pageRequest) {
-        return bookService.getAllPaged(pageRequest);
+    public Response getAllBooks() {
+        return bookService.getAllBooks();
     }
 
 

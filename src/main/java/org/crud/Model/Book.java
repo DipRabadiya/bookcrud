@@ -24,5 +24,4 @@ public class Book {
 
     @OneToOne
     private PublishingHouse publishingHouse;
-
 }

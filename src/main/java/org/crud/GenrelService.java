@@ -1,4 +1,4 @@
-package org.crud.Service;
+package org.crud;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -11,9 +11,9 @@ import org.crud.Model.Genrel;
 import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.GenrelRepository;
-import org.crud.Repository.PublishingHouseRepository;
 import org.crud.pages.PageRequest;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,17 +38,15 @@ public class GenrelService {
         return count;
     }
 
-    public Response getAllPaged(PageRequest pageRequest) {
-        LOGGER.log(Level.INFO, "Attempting to retrieve paged list of genrels...");
-        Long genrel = genrelRepository.findAll().count();
-        if (genrel == 0) {
-            LOGGER.log(Level.WARNING, "No genrels found for the given page request.");
+    public Response getAllGenrels() {
+        LOGGER.log(Level.INFO, "Attempting to retrieve all Genrels...");
+        List<Genrel> genrels = genrelRepository.listAll();
+        if (genrels.isEmpty()) {
+            LOGGER.log(Level.WARNING, "No Genrels found.");
             throw new WebApplicationException("Genrels not found!", Response.Status.NOT_FOUND);
         }
         LOGGER.log(Level.INFO, "Genrels retrieved successfully.");
-        return Response
-                .ok(genrelRepository.findAll().page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list())
-                .build();
+        return Response.ok(genrels).build();
     }
 
     public Response getAllByName(String name, PageRequest pageRequest) {
