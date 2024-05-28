@@ -9,6 +9,7 @@ import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.GenrelRepository;
 import org.crud.Repository.PublishingHouseRepository;
+import org.crud.Service.BookService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -96,4 +97,24 @@ class BookServiceTest {
         assertEquals(book1.getYearOfPublication(),2001);
         System.out.println(newUpdateBook);
     }
+
+    @Test
+    void count(){
+        PublishingHouse publishingHouse1 = new PublishingHouse(1L,"House1","New One",2001);
+        PublishingHouse publishingHouse2 = new PublishingHouse(2L,"House2","New Two",2002);
+        PublishingHouse publishingHouse3 = new PublishingHouse(3L,"House3","New Three",2003);
+        List<Book> books = new ArrayList<>();
+        books.add(new Book(1L,"Book1","New One",2001,publishingHouse1));
+        books.add(new Book(2L,"Book2","New Two",2002,publishingHouse2));
+        books.add(new Book(3L,"Book3","New Three",2003,publishingHouse3));
+
+        Mockito.when(bookRepository.count()).thenReturn((long) books.size());
+
+        Long response = bookService.count();
+
+        assertNotNull(response);
+        assertEquals(3L,response);
+
+    }
+
 }

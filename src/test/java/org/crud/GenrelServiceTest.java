@@ -10,7 +10,7 @@ import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.GenrelRepository;
 import org.crud.Repository.PublishingHouseRepository;
-import org.eclipse.microprofile.reactive.streams.operators.spi.Stage;
+import org.crud.Service.GenrelService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -45,7 +45,7 @@ class GenrelServiceTest {
                 new Book(3L,"Book3","New Three",2001,
                         new PublishingHouse(3L,"House3","New Three",2003))));
         Mockito.when(genrelRepository.listAll()).thenReturn(genrels);
-        System.out.println(genrels);
+//        System.out.println(genrels);
 
         Response response = genrelService.getAllGenrels();
 
@@ -100,5 +100,39 @@ class GenrelServiceTest {
         assertEquals(genrel1.getName(),"Genrel2");
         assertEquals(genrel1.getDescription(),"New Two");
         System.out.println(newUpdateGenrel);
+    }
+
+    @Test
+    void delete(){
+        PublishingHouse publishingHouse = new PublishingHouse(1L,"House1","New One",2000);
+        Book book = new Book(1L,"Book1","New One",2001,publishingHouse);
+        Genrel genrel = new Genrel(1L,"Genrel1","New One",book);
+        Mockito.when(genrelRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(genrel);
+
+        Mockito.when(genrelRepository.deleteById(1L)).thenReturn(Boolean.TRUE);
+
+        Response response = genrelService.delete(1L);
+        assertEquals(Response.noContent().build().getStatus(),response.getStatus());
+
+    }
+
+    @Test
+    void count(){
+        List<Genrel> genrels = new ArrayList<>();
+        genrels.add(new Genrel(1L,"Genrel1","New One",
+                new Book(1L,"Book1","New One",2001,
+                        new PublishingHouse(1L,"House1","New One",2001))));
+        genrels.add(new Genrel(2L,"Genrel2","New Two",
+                new Book(2L,"Book2","New Two",2002,
+                        new PublishingHouse(2L,"House2","New Three",2002))));
+        genrels.add(new Genrel(3L,"Genrel1","New Three",
+                new Book(3L,"Book3","New Three",2001,
+                        new PublishingHouse(3L,"House3","New Three",2003))));
+        Mockito.when(genrelRepository.count()).thenReturn((long) genrels.size());
+
+        long response = genrelService.count();
+
+        assertNotNull(response);
+        assertEquals(3L,response);
     }
 }

@@ -3,14 +3,12 @@ package org.crud;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import org.crud.Model.Book;
 import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.PublishingHouseRepository;
+import org.crud.Service.PublishingHouseService;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -84,5 +82,20 @@ class PublishingHouseServiceTest {
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertEquals(response.getStatus(),Response.Status.OK.getStatusCode());
+    }
+
+    @Test
+    void count(){
+        List<PublishingHouse> publishingHouses = new ArrayList<>();
+        publishingHouses.add(new PublishingHouse(1L,"House1","New One",2001));
+        publishingHouses.add(new PublishingHouse(2L,"House2","New Two",2002));
+        publishingHouses.add(new PublishingHouse(3L,"House3","New Three",2003));
+
+        Mockito.when(publishingHouseRepository.count()).thenReturn((long) publishingHouses.size());
+
+        long response = publishingHouseService.count();
+
+        assertNotNull(response);
+        assertEquals(3L,response);
     }
 }
