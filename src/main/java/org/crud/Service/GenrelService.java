@@ -1,17 +1,13 @@
-package org.crud;
+package org.crud.Service;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.crud.Model.Book;
 import org.crud.Model.Genrel;
-import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.GenrelRepository;
-import org.crud.pages.PageRequest;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -47,17 +43,6 @@ public class GenrelService {
         }
         LOGGER.log(Level.INFO, "Genrels retrieved successfully.");
         return Response.ok(genrels).build();
-    }
-
-    public Response getAllByName(String name, PageRequest pageRequest) {
-        LOGGER.log(Level.INFO, "Attempting to retrieve Genrels by name: " + name);
-        PanacheQuery<Genrel> genrelQuery = genrelRepository.find("name", name);
-        if (genrelQuery.count() == 0) {
-            LOGGER.log(Level.WARNING, "No Genrels found with name: " + name);
-            throw new WebApplicationException("Genrels not found with name: " + name, Response.Status.NOT_FOUND);
-        }
-        LOGGER.log(Level.INFO, "Genrels retrieved successfully.");
-        return Response.ok(genrelQuery.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
     }
 
     public Response addGenrel(Genrel genrel) {

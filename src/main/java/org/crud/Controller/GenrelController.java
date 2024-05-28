@@ -6,9 +6,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.crud.Service.GenrelService;
 import org.crud.Model.Genrel;
-import org.crud.GenrelService;
-import org.crud.pages.PageRequest;
 
 @Path("/genres")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,13 +29,6 @@ public class GenrelController {
         return genrelService.getAllGenrels();
     }
 
-
-    @GET
-    @Path("/find/{name}")
-    @Transactional
-    public Response getAllByName(@PathParam("name") String name, @BeanParam PageRequest pageRequest) {
-        return genrelService.getAllByName(name, pageRequest);
-    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

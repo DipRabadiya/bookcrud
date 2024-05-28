@@ -5,9 +5,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.crud.Service.BookService;
 import org.crud.Model.Book;
-import org.crud.BookService;
-import org.crud.pages.PageRequest;
 
 @Path("/books")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,14 +26,6 @@ public class BookController {
     @Transactional
     public Response getAllBooks() {
         return bookService.getAllBooks();
-    }
-
-
-    @GET
-    @Path("/find/{name}")
-    @Transactional
-    public Response getAllByName(@PathParam("name") String name, @BeanParam PageRequest pageRequest) {
-        return bookService.getAllByName(name, pageRequest);
     }
 
     @POST
@@ -58,5 +49,4 @@ public class BookController {
     public Response delete(@PathParam("id") Long id) {
         return bookService.delete(id);
     }
-
 }

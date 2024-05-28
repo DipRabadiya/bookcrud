@@ -6,8 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.crud.Model.PublishingHouse;
-import org.crud.PublishingHouseService;
-import org.crud.pages.PageRequest;
+import org.crud.Service.PublishingHouseService;
 
 @Path("/publishingHouses")
 @Produces(MediaType.APPLICATION_JSON)

@@ -1,6 +1,5 @@
-package org.crud;
+package org.crud.Service;
 
-import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
@@ -9,7 +8,6 @@ import org.crud.Model.Book;
 import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.PublishingHouseRepository;
-import org.crud.pages.PageRequest;
 
 import java.util.List;
 import java.util.logging.Level;

@@ -1,7 +1,5 @@
-package org.crud;
+package org.crud.Service;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
@@ -12,7 +10,6 @@ import org.crud.Model.PublishingHouse;
 import org.crud.Repository.BookRepository;
 import org.crud.Repository.GenrelRepository;
 import org.crud.Repository.PublishingHouseRepository;
-import org.crud.pages.PageRequest;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -53,15 +50,6 @@ public class BookService {
         return Response.ok(books).build();
     }
 
-    public Response getAllByName(String name, PageRequest pageRequest) {
-        PanacheQuery<Book> bookPanacheQuery = bookRepository.find("name" + name);
-        if (bookPanacheQuery.count() == 0) {
-            LOGGER.log(Level.WARNING, "No books found with name: " + name);
-            throw new WebApplicationException("Books not found with name: " + name, Response.Status.NOT_FOUND);
-        }
-        LOGGER.log(Level.INFO, "Books retrieved successfully.");
-        return Response.ok(bookPanacheQuery.page(Page.of(pageRequest.getPageNum(), pageRequest.getPageSize())).list()).build();
-    }
 
     public Response addBook(Book book) {
         LOGGER.log(Level.INFO, "Attempting to add book: " + book.getName());
