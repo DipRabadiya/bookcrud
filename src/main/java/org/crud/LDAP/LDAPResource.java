@@ -8,6 +8,7 @@ import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -26,11 +27,14 @@ public class LDAPResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/users")
     @Fallback(fallbackMethod = "getAllUserFallback")
 //    @Timeout(1000)
 //    @Retry(maxRetries = 3)
     @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 10, delayUnit = ChronoUnit.SECONDS)
-
+    @Counted(name = "CountOfGetUsers", description = "How many time this method is called")
+    @Timed(name = "TimeTakeForGetUsers", description = "How much time api take to response", unit = MetricUnits.MILLISECONDS)
+    @Metered(name = "MeteredGetUsers", description = "how freq this api is called")
     public Response getAllUser() {
         LOGGER.info("Fetching all users from LDAP");
         return Response.ok(ldapRestClient.getAllUsers()).build();
